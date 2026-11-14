@@ -1,8 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  (function () {
+    window.addEventListener(
+      'error',
+      function (e) {
+        if (e && e.filename && e.filename.indexOf('chrome-extension://') === 0) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+        }
+      },
+      true
+    );
+    try {
+      var desc = Object.getOwnPropertyDescriptor(window, 'fetch');
+      if (desc && desc.get && !desc.set && desc.configurable) {
+        var overrideFetch = null;
+        var origGet = desc.get;
+        Object.defineProperty(window, 'fetch', {
+          configurable: true,
+          enumerable: desc.enumerable,
+          get: function () {
+            return overrideFetch || origGet.call(window);
+          },
+          set: function (fn) {
+            overrideFetch = fn;
+          },
+        });
+      }
+    } catch (_) {}
+  })();
+</script>
 <title>Pexelix | Graphic Designer for Brands, Books &amp; Businesses</title>
 <meta name="description" content="I'm Muhammad Naseem, a graphic designer helping businesses, authors and creators build visual identities and book covers that earn attention and trust. Logo design, brand identity, book covers and more.">
 <meta name="keywords" content="Graphic Designer, Graphic Design Services, Brand Identity Designer, Logo Designer, Print Designer, Book Cover Designer, eBook Cover Designer, YouTube Thumbnail Designer, Creative Designer, Social Media Designer, Branding Expert">
@@ -12,334 +43,442 @@
 <meta property="og:url" content="https://pexelix.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   :root{
-    --ink:#151310;
-    --ink-soft:#2a2620;
-    --paper:#f6f1e6;
-    --paper-dim:#ece4d3;
-    --rust:#c1613b;
-    --rust-deep:#9c4a2b;
-    --gold:#bd9a5f;
-    --line: rgba(21,19,16,0.12);
-    --line-light: rgba(246,241,230,0.16);
-    --shadow: 0 30px 60px -20px rgba(21,19,16,0.35);
-    --ease: cubic-bezier(.16,.84,.44,1);
+    --bg:#10110F;
+    --surface:#171916;
+    --surface-hover:#1E201C;
+    --ink:#F0EFE9;
+    --ink-soft:#A5A59D;
+    --accent:#C2F36B;
+    --accent-hover:#F0EFE9;
+    --line:rgba(240,239,233,0.12);
+    --line-strong:rgba(240,239,233,0.22);
+    --shadow:0 30px 60px -20px rgba(0,0,0,0.65);
+    --ease:cubic-bezier(.16,1,.3,1);
+    color-scheme:dark;
   }
 
   *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth;background:var(--bg);color:var(--ink);}
   body{
-    background:var(--paper);
+    background:var(--bg);
     color:var(--ink);
-    font-family:'Manrope',sans-serif;
+    font-family:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
     line-height:1.6;
+    letter-spacing:0.01em;
     overflow-x:hidden;
     -webkit-font-smoothing:antialiased;
   }
   img{max-width:100%;display:block;}
   a{color:inherit;text-decoration:none;}
   ul{list-style:none;}
-  button{font-family:inherit;cursor:pointer;border:none;background:none;}
-  .serif{font-family:'Fraunces',serif;}
-  .container{width:100%;max-width:1240px;margin:0 auto;padding:0 clamp(24px, 6vw, 88px);}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  .serif{font-family:'Playfair Display',Georgia,serif;}
+  .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}
+  .container{width:100%;max-width:1320px;margin:0 auto;padding:0 clamp(24px,5vw,72px);}
   section{position:relative;}
-  ::selection{background:var(--rust);color:var(--paper);}
+  ::selection{background:var(--accent);color:var(--bg);}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
 
   .eyebrow{
-    display:inline-flex;align-items:center;gap:10px;
-    font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--rust-deep);font-weight:700;margin-bottom:18px;
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);font-weight:500;margin-bottom:20px;
   }
-  .eyebrow::before{content:'';width:26px;height:1px;background:var(--rust);}
+  .eyebrow::before{content:'';width:26px;height:1px;background:var(--accent);}
 
-  h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:500;line-height:1.08;letter-spacing:-0.01em;}
+  h1,h2,h3,h4{
+    font-family:'Outfit',system-ui,-apple-system,sans-serif;
+    font-weight:500;line-height:1.06;letter-spacing:-0.025em;
+    color:var(--ink);
+  }
 
   .btn{
     display:inline-flex;align-items:center;gap:10px;
-    padding:16px 30px;border-radius:100px;
-    font-size:14.5px;font-weight:700;letter-spacing:.02em;
-    transition:transform .45s var(--ease), box-shadow .45s var(--ease), background .3s ease, color .3s ease;
-    white-space:nowrap;
+    padding:14px 26px;border-radius:2px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;
+    transition:transform .2s var(--ease), background .2s ease, color .2s ease, border-color .2s ease;
+    white-space:nowrap;flex-shrink:0;
   }
-  .btn-primary{background:var(--ink);color:var(--paper);}
-  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 34px -10px rgba(21,19,16,.45);}
-  .btn-rust{background:var(--rust);color:var(--paper);}
-  .btn-rust:hover{transform:translateY(-3px);box-shadow:0 18px 34px -10px rgba(193,97,59,.55);}
-  .btn-outline{border:1.5px solid var(--ink);color:var(--ink);}
-  .btn-outline:hover{background:var(--ink);color:var(--paper);transform:translateY(-3px);}
-  .btn-outline-light{border:1.5px solid var(--line-light);color:var(--paper);}
-  .btn-outline-light:hover{background:var(--paper);color:var(--ink);}
-  .btn i{font-size:13px;transition:transform .35s var(--ease);}
-  .btn:hover i{transform:translate(3px,-3px);}
+  .btn-primary{background:var(--accent);color:var(--bg);border:1px solid var(--accent);}
+  .btn-primary:hover{background:var(--ink);border-color:var(--ink);transform:translateY(-2px);}
+  .btn-rust{background:var(--accent);color:var(--bg);border:1px solid var(--accent);}
+  .btn-rust:hover{background:var(--ink);border-color:var(--ink);transform:translateY(-2px);}
+  .btn-outline{border:1px solid var(--line-strong);color:var(--ink);background:transparent;}
+  .btn-outline:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+  .btn-outline-light{border:1px solid var(--line-strong);color:var(--ink);background:transparent;}
+  .btn-outline-light:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+  .btn i{font-size:12px;transition:transform .2s var(--ease);}
+  .btn:hover i{transform:translate(2px,-2px);}
 
-  .reveal{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease), transform .9s var(--ease);}
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .75s var(--ease), transform .75s var(--ease);}
   .reveal.in{opacity:1;transform:translateY(0);}
 
   /* ===== HEADER ===== */
   header{
     position:fixed;top:0;left:0;right:0;z-index:100;
-    padding:22px 0;transition:padding .4s var(--ease), background .4s var(--ease), box-shadow .4s var(--ease);
+    padding:22px 0;
+    transition:padding .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
+    border-bottom:1px solid transparent;
   }
   header.scrolled{
-    padding:14px 0;background:rgba(246,241,230,0.86);backdrop-filter:blur(14px);
-    box-shadow:0 1px 0 var(--line);
+    padding:14px 0;
+    background:rgba(16,17,15,0.88);
+    backdrop-filter:blur(14px);
+    border-bottom-color:var(--line);
   }
-  .nav-inner{display:flex;align-items:center;justify-content:space-between;}
-  .logo{font-family:'Fraunces',serif;font-size:24px;font-weight:600;letter-spacing:-0.01em;}
-  .logo span{color:var(--rust);}
-  .nav-links{display:flex;align-items:center;gap:38px;}
-  .nav-links a{font-size:14px;font-weight:600;position:relative;padding:4px 0;}
+  .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:32px;}
+  .logo{
+    font-family:'Outfit',sans-serif;font-size:20px;font-weight:600;
+    letter-spacing:0.18em;text-transform:uppercase;color:var(--ink);
+    white-space:nowrap;flex-shrink:0;
+  }
+  .logo span{color:var(--accent);}
+  .nav-links{display:flex;align-items:center;gap:34px;}
+  .nav-links a{
+    font-size:14px;font-weight:500;color:var(--ink-soft);
+    position:relative;padding:4px 0;white-space:nowrap;flex-shrink:0;
+    transition:color .2s ease;
+  }
   .nav-links a::after{
-    content:'';position:absolute;left:0;bottom:0;width:0;height:1.5px;background:var(--rust);
-    transition:width .35s var(--ease);
+    content:'';position:absolute;left:0;bottom:0;width:0;height:1px;background:var(--accent);
+    transition:width .25s var(--ease);
   }
+  .nav-links a:hover,.nav-links a.active{color:var(--ink);}
+  .nav-links a.active{color:var(--accent);}
   .nav-links a:hover::after,.nav-links a.active::after{width:100%;}
-  .nav-links a.ext i{font-size:11px;margin-left:5px;opacity:.6;}
-  .nav-right{display:flex;align-items:center;gap:22px;}
-  .burger{display:none;flex-direction:column;gap:5px;width:26px;z-index:200;}
-  .burger span{height:2px;background:var(--ink);border-radius:2px;transition:all .35s var(--ease);}
+  .nav-links a.ext i{font-size:11px;margin-left:5px;opacity:.7;}
+  .nav-right{display:flex;align-items:center;gap:18px;flex-shrink:0;}
+  .burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;padding:10px;z-index:200;}
+  .burger span{height:1.5px;width:100%;background:var(--ink);transition:all .25s var(--ease);}
 
   /* ===== HERO ===== */
   .hero{
     min-height:100vh;display:flex;align-items:center;
-    padding:150px 0 100px;position:relative;
+    padding:144px 0 96px;position:relative;
     background:
-      radial-gradient(60% 55% at 82% 12%, rgba(193,97,59,0.16), transparent 60%),
-      radial-gradient(45% 40% at 8% 90%, rgba(189,154,95,0.18), transparent 60%),
-      var(--paper);
+      radial-gradient(50% 50% at 84% 16%, rgba(194,243,107,0.07), transparent 65%),
+      radial-gradient(45% 45% at 10% 88%, rgba(240,239,233,0.03), transparent 65%),
+      var(--bg);
     overflow:hidden;
   }
   .hero::before{
-    content:'';position:absolute;inset:0;opacity:.5;
+    content:'';position:absolute;inset:0;opacity:.35;
     background-image:
       linear-gradient(var(--line) 1px, transparent 1px),
       linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size:64px 64px;
-    -webkit-mask-image:radial-gradient(60% 60% at 70% 30%, black, transparent 75%);
-    mask-image:radial-gradient(60% 60% at 70% 30%, black, transparent 75%);
+    background-size:72px 72px;
+    -webkit-mask-image:radial-gradient(60% 60% at 72% 30%, black, transparent 78%);
+    mask-image:radial-gradient(60% 60% at 72% 30%, black, transparent 78%);
     pointer-events:none;
   }
-  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;position:relative;z-index:2;}
-  .hero h1{font-size:clamp(42px,5.4vw,74px);}
-  .hero h1 em{font-style:italic;color:var(--rust);font-weight:400;}
-  .hero p.lead{font-size:18px;max-width:480px;color:var(--ink-soft);margin:26px 0 38px;}
-  .hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px;}
-  .hero-stats{display:flex;gap:44px;}
-  .hero-stats div{border-left:2px solid var(--rust);padding-left:14px;}
-  .hero-stats .num{font-family:'Fraunces',serif;font-size:30px;font-weight:600;}
-  .hero-stats .lbl{font-size:12.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:64px;align-items:center;position:relative;z-index:2;}
+  .hero h1{font-size:clamp(42px,5.6vw,78px);text-wrap:balance;line-height:0.98;}
+  .hero h1 em{
+    font-family:'Playfair Display',Georgia,serif;
+    font-style:italic;color:var(--accent);font-weight:400;
+  }
+  .hero p.lead{font-size:17px;max-width:520px;color:var(--ink-soft);margin:28px 0 38px;line-height:1.7;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;}
+  .hero-stats{display:flex;gap:42px;padding-top:28px;border-top:1px solid var(--line);}
+  .hero-stats div{padding-right:12px;}
+  .hero-stats .num{
+    font-family:'Outfit',sans-serif;font-size:32px;font-weight:600;
+    color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;
+  }
+  .hero-stats .lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.12em;margin-top:6px;
+  }
 
   .hero-visual{position:relative;}
   .hero-card{
-    border-radius:22px;overflow:hidden;position:relative;
+    border-radius:4px;overflow:hidden;position:relative;
     box-shadow:var(--shadow);
-    transform:rotate(2deg);
-    border:10px solid var(--paper);
-    background:var(--ink);
+    border:1px solid var(--line-strong);
+    background:var(--surface);
   }
-  .hero-card img{aspect-ratio:4/5;object-fit:cover;}
+  .hero-card img{aspect-ratio:4/5;width:100%;object-fit:cover;object-position:top center;}
   .float-badge{
-    position:absolute;bottom:-26px;left:-30px;
-    background:var(--ink);color:var(--paper);
-    padding:18px 22px;border-radius:16px;
-    display:flex;align-items:center;gap:12px;
-    box-shadow:0 20px 40px -12px rgba(21,19,16,.5);
+    position:absolute;bottom:-22px;left:-24px;
+    background:var(--surface);color:var(--ink);
+    border:1px solid var(--line-strong);
+    padding:16px 20px;border-radius:4px;
+    display:flex;align-items:center;gap:14px;
+    box-shadow:0 20px 40px -12px rgba(0,0,0,.7);
     animation:floaty 5s ease-in-out infinite;
   }
-  .float-badge i{color:var(--gold);font-size:20px;}
-  .float-badge .t1{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.7;}
-  .float-badge .t2{font-family:'Fraunces',serif;font-size:15px;}
-  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  .float-badge i{color:var(--accent);font-size:18px;}
+  .float-badge .t1{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .float-badge .t2{font-family:'Outfit',sans-serif;font-size:15px;font-weight:500;color:var(--ink);}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
 
   .scroll-cue{
-    position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
-    display:flex;flex-direction:column;align-items:center;gap:10px;
-    font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);
+    position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
     z-index:3;
   }
-  .scroll-cue .line{width:1px;height:38px;background:linear-gradient(var(--ink-soft),transparent);animation:scrolldown 1.8s ease-in-out infinite;}
+  .scroll-cue .line{width:1px;height:32px;background:linear-gradient(var(--accent),transparent);animation:scrolldown 1.8s ease-in-out infinite;}
   @keyframes scrolldown{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
 
   /* ===== TRUST STRIP ===== */
-  .trust{background:var(--ink);color:var(--paper);padding:26px 0;overflow:hidden;}
-  .marquee{display:flex;gap:0;white-space:nowrap;animation:marquee 26s linear infinite;width:max-content;}
-  .marquee span{font-family:'Fraunces',serif;font-style:italic;font-size:19px;padding:0 34px;color:rgba(246,241,230,0.62);display:flex;align-items:center;gap:34px;}
-  .marquee span i{font-size:6px;color:var(--rust);}
+  .trust{
+    background:var(--surface);color:var(--ink);
+    padding:22px 0;overflow:hidden;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .marquee{display:flex;gap:0;white-space:nowrap;animation:marquee 28s linear infinite;width:max-content;}
+  .marquee span{
+    font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:19px;
+    padding:0 34px;color:var(--ink-soft);display:flex;align-items:center;gap:34px;
+  }
+  .marquee span i{font-size:5px;color:var(--accent);}
   @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
 
   /* ===== SECTION HEADERS ===== */
-  .sec{padding-top:130px;padding-bottom:130px;}
-  .sec-head{max-width:640px;margin-bottom:70px;}
-  .sec-head h2{font-size:clamp(32px,4vw,48px);}
-  .sec-head p{margin-top:18px;color:var(--ink-soft);font-size:16.5px;}
+  .sec{padding-top:120px;padding-bottom:120px;}
+  .sec-head{max-width:680px;margin-bottom:64px;}
+  .sec-head h2{font-size:clamp(32px,4.2vw,50px);text-wrap:balance;}
+  .sec-head p{margin-top:18px;color:var(--ink-soft);font-size:16.5px;line-height:1.65;}
   .sec-head.center{margin-left:auto;margin-right:auto;text-align:center;}
 
   /* ===== WHY WORK WITH ME ===== */
-  .why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:hidden;}
-  .why-card{background:var(--paper);padding:40px 30px;transition:background .4s ease;}
-  .why-card:hover{background:var(--paper-dim);}
-  .why-card .num{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--rust);margin-bottom:22px;display:block;}
-  .why-card h3{font-size:20px;margin-bottom:12px;font-weight:500;}
-  .why-card p{font-size:14.5px;color:var(--ink-soft);}
+  .why-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  }
+  .why-card{background:var(--bg);padding:38px 28px;transition:background .25s ease;}
+  .why-card:hover{background:var(--surface);}
+  .why-card .num{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.12em;
+    color:var(--accent);margin-bottom:22px;display:block;font-variant-numeric:tabular-nums;
+  }
+  .why-card h3{font-size:21px;margin-bottom:12px;font-weight:500;}
+  .why-card p{font-size:14.5px;color:var(--ink-soft);line-height:1.65;}
 
   /* ===== ABOUT ===== */
-  .about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:start;}
-  .about-portrait{border-radius:22px;overflow:hidden;border:10px solid var(--paper-dim);position:sticky;top:120px;box-shadow:var(--shadow);}
-  .about-portrait img{aspect-ratio:3/4;object-fit:cover;}
-  .about-copy h3{font-size:23px;margin:32px 0 14px;font-weight:500;}
+  #about{border-top:1px solid var(--line);}
+  .about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:64px;align-items:start;}
+  .about-portrait{
+    border-radius:4px;overflow:hidden;border:1px solid var(--line);
+    background:var(--surface);position:sticky;top:110px;box-shadow:var(--shadow);
+  }
+  .about-portrait img{aspect-ratio:3/4;width:100%;object-fit:cover;object-position:top center;}
+  .about-copy h3{font-size:24px;margin:34px 0 12px;font-weight:500;color:var(--ink);}
   .about-copy h3:first-child{margin-top:0;}
-  .about-copy p{color:var(--ink-soft);font-size:15.5px;margin-bottom:14px;}
+  .about-copy p{color:var(--ink-soft);font-size:16px;margin-bottom:14px;line-height:1.75;}
 
   /* ===== PROCESS ===== */
-  .process-row{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+  .process-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative;}
   .process-row::before{
-    content:'';position:absolute;top:26px;left:0;right:0;height:1px;background:var(--line);
+    content:'';position:absolute;top:25px;left:0;right:0;height:1px;background:var(--line);
   }
-  .process-step{padding-right:24px;position:relative;}
+  .process-step{padding-right:16px;position:relative;}
   .process-step .idx{
-    width:52px;height:52px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink);
-    display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:18px;
+    width:50px;height:50px;border-radius:50%;
+    background:var(--bg);border:1px solid var(--line-strong);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;
     margin-bottom:26px;position:relative;z-index:2;
+    transition:border-color .2s ease, background .2s ease, color .2s ease;
   }
-  .process-step h3{font-size:19px;margin-bottom:10px;font-weight:500;}
-  .process-step p{font-size:14px;color:var(--ink-soft);}
+  .process-step:hover .idx{background:var(--accent);color:var(--bg);border-color:var(--accent);}
+  .process-step h3{font-size:21px;margin-bottom:10px;font-weight:500;}
+  .process-step p{font-size:14.5px;color:var(--ink-soft);line-height:1.65;}
 
   /* ===== SERVICES FULL GRID ===== */
+  #services{border-top:1px solid var(--line);}
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   .service-full{
-    background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:34px;
-    transition:box-shadow .4s var(--ease), transform .4s var(--ease), border-color .4s ease;
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:32px;
+    transition:border-color .25s var(--ease), transform .25s var(--ease), background .25s ease;
   }
-  .service-full:hover{box-shadow:var(--shadow);transform:translateY(-6px);border-color:transparent;}
+  .service-full:hover{background:var(--surface-hover);transform:translateY(-4px);border-color:rgba(194,243,107,0.45);}
   .service-full .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-  .service-full i{font-size:23px;color:var(--rust);}
-  .service-full .tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);padding:5px 10px;border-radius:100px;}
-  .service-full h3{font-size:20px;margin-bottom:9px;font-weight:500;}
-  .service-full p{font-size:14px;color:var(--ink-soft);}
+  .service-full i{font-size:20px;color:var(--accent);}
+  .service-full .tag{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .service-full h3{font-size:21px;margin-bottom:10px;font-weight:500;}
+  .service-full p{font-size:14.5px;color:var(--ink-soft);line-height:1.65;}
 
   /* ===== PORTFOLIO REDIRECT BAND ===== */
   .port-band{
-    background:var(--ink);color:var(--paper);border-radius:28px;
-    padding:70px 60px;position:relative;overflow:hidden;
+    background:var(--surface);color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:4px;
+    padding:64px 56px;position:relative;overflow:hidden;
   }
   .port-band::before{
     content:'';position:absolute;inset:0;
-    background:radial-gradient(55% 90% at 85% 10%, rgba(193,97,59,.3), transparent 65%);
+    background:radial-gradient(50% 90% at 88% 15%, rgba(194,243,107,0.09), transparent 65%);
+    pointer-events:none;
   }
   .port-band-inner{position:relative;display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;}
-  .port-band h2{font-size:clamp(28px,3.4vw,40px);max-width:480px;}
-  .port-band p{color:rgba(246,241,230,.65);margin-top:14px;max-width:440px;font-size:15.5px;}
+  .port-band h2{font-size:clamp(28px,3.4vw,42px);max-width:520px;}
+  .port-band p{color:var(--ink-soft);margin-top:14px;max-width:460px;font-size:15.5px;}
   .port-band .links{display:flex;gap:14px;flex-wrap:wrap;}
 
   /* ===== TESTIMONIALS ===== */
-  .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
-  .test-card{background:var(--paper-dim);border-radius:20px;padding:38px 34px;border:1px solid var(--line);}
-  .test-card i.fa-quote-left{color:var(--rust);font-size:22px;margin-bottom:22px;display:block;}
-  .test-card p.quote{font-family:'Fraunces',serif;font-size:18px;line-height:1.5;font-style:italic;margin-bottom:26px;}
-  .test-who{display:flex;align-items:center;gap:14px;}
-  .test-avatar{width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;}
-  .test-who .n{font-weight:700;font-size:14.5px;}
+  #testimonials{border-top:1px solid var(--line);background:#131412;}
+  .test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .test-card{
+    background:var(--surface);border-radius:4px;padding:36px 32px;
+    border:1px solid var(--line);display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .test-card i.fa-quote-left{color:var(--accent);font-size:18px;margin-bottom:22px;display:block;}
+  .test-card p.quote{
+    font-family:'Playfair Display',Georgia,serif;font-size:18px;line-height:1.58;
+    font-style:italic;margin-bottom:28px;color:var(--ink);
+  }
+  .test-who{display:flex;align-items:center;gap:14px;padding-top:18px;border-top:1px solid var(--line);}
+  .test-avatar{
+    width:42px;height:42px;border-radius:50%;
+    background:var(--bg);border:1px solid var(--line-strong);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Outfit',sans-serif;font-size:15px;font-weight:600;flex-shrink:0;
+  }
+  .test-who .n{font-weight:600;font-size:14.5px;color:var(--ink);}
   .test-who .r{font-size:12.5px;color:var(--ink-soft);}
 
   /* ===== CONTACT ===== */
-  .contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:start;}
+  #contact{border-top:1px solid var(--line);}
+  .contact-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:52px;align-items:start;}
   .glass-form{
-    background:rgba(255,255,255,0.5);
-    backdrop-filter:blur(18px);
-    border:1px solid rgba(255,255,255,0.6);
-    border-radius:26px;padding:44px;box-shadow:var(--shadow);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;padding:40px;box-shadow:var(--shadow);
   }
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
   .field{margin-bottom:20px;}
-  .field label{display:block;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:9px;color:var(--ink-soft);}
+  .field label{
+    display:block;font-family:'JetBrains Mono',monospace;
+    font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.12em;
+    margin-bottom:8px;color:var(--ink-soft);
+  }
   .field input,.field select,.field textarea{
-    width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(21,19,16,0.18);
-    background:rgba(255,255,255,0.7);font-family:inherit;font-size:14.5px;color:var(--ink);
-    transition:border-color .3s ease, background .3s ease;
+    width:100%;padding:13px 15px;border-radius:2px;border:1px solid var(--line);
+    background:var(--bg);font-family:inherit;font-size:14.5px;color:var(--ink);
+    transition:border-color .2s ease, background .2s ease;
   }
-  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--rust);background:#fff;}
+  .field input::placeholder,.field textarea::placeholder{color:rgba(165,165,157,0.5);}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--accent);background:#0c0d0b;}
   .field textarea{resize:vertical;min-height:120px;}
-  .form-note{font-size:12.5px;color:var(--ink-soft);margin-top:14px;}
+  .form-note{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:14px;}
 
-  .contact-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .contact-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .c-card{
-    background:var(--paper-dim);border:1px solid var(--line);border-radius:16px;padding:22px;
-    display:flex;flex-direction:column;gap:14px;transition:transform .35s var(--ease), background .35s ease;
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px;
+    display:flex;flex-direction:column;gap:14px;
+    transition:transform .25s var(--ease), border-color .25s ease, background .25s ease;
   }
-  .c-card:hover{transform:translateY(-4px);background:var(--ink);color:var(--paper);}
-  .c-card:hover .c-lbl{color:rgba(246,241,230,.6);}
-  .c-card i{font-size:19px;color:var(--rust);}
-  .c-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
-  .c-val{font-size:14.5px;font-weight:700;}
+  .c-card:hover{transform:translateY(-3px);border-color:var(--accent);background:var(--surface-hover);}
+  .c-card i{font-size:18px;color:var(--accent);}
+  .c-lbl{
+    font-family:'JetBrains Mono',monospace;
+    font-size:10.5px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-soft);
+  }
+  .c-val{font-size:14.5px;font-weight:600;color:var(--ink);}
 
   /* ===== FOOTER ===== */
-  footer{background:var(--ink);color:var(--paper);padding:80px 0 30px;}
-  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:50px;margin-bottom:60px;}
-  .foot-logo{font-family:'Fraunces',serif;font-size:26px;margin-bottom:18px;}
-  .foot-logo span{color:var(--rust);}
-  .foot-about{color:rgba(246,241,230,.6);font-size:14.5px;max-width:280px;margin-bottom:24px;}
-  .foot-social{display:flex;gap:12px;}
-  .foot-social a{
-    width:38px;height:38px;border:1px solid var(--line-light);border-radius:50%;
-    display:flex;align-items:center;justify-content:center;font-size:14px;
-    transition:all .3s ease;
+  footer{background:var(--bg);color:var(--ink);padding:80px 0 32px;border-top:1px solid var(--line);}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1.2fr;gap:48px;margin-bottom:56px;}
+  .foot-logo{
+    font-family:'Outfit',sans-serif;font-size:22px;font-weight:600;
+    letter-spacing:0.18em;text-transform:uppercase;margin-bottom:16px;
   }
-  .foot-social a:hover{background:var(--rust);border-color:var(--rust);transform:translateY(-3px);}
-  .foot-col h4{font-size:13px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:22px;color:var(--gold);font-family:'Manrope';font-weight:700;}
-  .foot-col ul li{margin-bottom:13px;}
-  .foot-col ul li a{font-size:14.5px;color:rgba(246,241,230,.72);transition:color .3s ease;}
-  .foot-col ul li a:hover{color:var(--paper);}
-  .foot-bottom{border-top:1px solid var(--line-light);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-  .foot-bottom p{font-size:13px;color:rgba(246,241,230,.5);}
+  .foot-logo span{color:var(--accent);}
+  .foot-about{color:var(--ink-soft);font-size:14.5px;max-width:300px;margin-bottom:24px;line-height:1.65;}
+  .foot-social{display:flex;gap:10px;}
+  .foot-social a{
+    width:40px;height:40px;border:1px solid var(--line);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink-soft);
+    transition:all .2s ease;
+  }
+  .foot-social a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+  .foot-col h4{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;text-transform:uppercase;letter-spacing:.16em;
+    margin-bottom:20px;color:var(--accent);font-weight:500;
+  }
+  .foot-col ul li{margin-bottom:12px;}
+  .foot-col ul li a{font-size:14.5px;color:var(--ink-soft);transition:color .2s ease;}
+  .foot-col ul li a:hover{color:var(--accent);}
+  .foot-bottom{
+    border-top:1px solid var(--line);padding-top:26px;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  }
+  .foot-bottom p{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);}
 
   /* toast */
   .toast{
-    position:fixed;bottom:30px;right:30px;background:var(--ink);color:var(--paper);
-    padding:18px 26px;border-radius:14px;display:flex;align-items:center;gap:12px;
-    box-shadow:var(--shadow);transform:translateY(140%);transition:transform .5s var(--ease);z-index:300;
+    position:fixed;bottom:28px;right:28px;background:var(--surface);color:var(--ink);
+    border:1px solid var(--accent);padding:16px 22px;border-radius:4px;
+    display:flex;align-items:center;gap:12px;
+    box-shadow:var(--shadow);transform:translateY(160%);transition:transform .35s var(--ease);z-index:300;
+    font-size:14px;
   }
   .toast.show{transform:translateY(0);}
-  .toast i{color:var(--gold);}
+  .toast i{color:var(--accent);}
 
   /* ===== RESPONSIVE ===== */
   @media (max-width:1080px){
     .hero-grid{grid-template-columns:1fr;}
     .hero-visual{max-width:420px;margin:0 auto;}
     .why-grid{grid-template-columns:repeat(2,1fr);}
-    .process-row{grid-template-columns:repeat(2,1fr);row-gap:50px;}
+    .process-row{grid-template-columns:repeat(2,1fr);row-gap:44px;}
     .process-row::before{display:none;}
     .about-grid{grid-template-columns:1fr;}
-    .about-portrait{position:static;max-width:340px;}
+    .about-portrait{position:static;max-width:360px;}
+    .services-grid{grid-template-columns:repeat(2,1fr);}
     .test-grid{grid-template-columns:1fr;}
     .contact-grid{grid-template-columns:1fr;}
     .foot-grid{grid-template-columns:1fr 1fr;}
     .port-band-inner{flex-direction:column;align-items:flex-start;}
   }
   @media (max-width:720px){
+    header{padding:14px 0;}
     .nav-links{
-      position:fixed;top:0;right:0;height:100vh;width:78%;max-width:340px;
-      background:var(--ink);color:var(--paper);flex-direction:column;align-items:flex-start;
-      justify-content:center;gap:30px;padding:40px;transform:translateX(100%);
-      transition:transform .5s var(--ease);z-index:150;
+      position:fixed;top:0;right:0;height:100vh;width:80%;max-width:340px;
+      background:var(--bg);color:var(--ink);border-left:1px solid var(--line);
+      flex-direction:column;align-items:flex-start;
+      justify-content:center;gap:26px;padding:40px;transform:translateX(100%);
+      transition:transform .35s var(--ease);z-index:150;
     }
     .nav-links.open{transform:translateX(0);}
-    .nav-links a{font-size:20px;}
+    .nav-links a{font-size:22px;font-family:'Outfit',sans-serif;color:var(--ink);}
     .nav-right .btn-primary{display:none;}
     .burger{display:flex;}
-    .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+    .burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
     .burger.open span:nth-child(2){opacity:0;}
-    .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-    .hero-stats{flex-wrap:wrap;gap:26px;}
+    .burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+    .hero{padding:116px 0 80px;}
+    .hero-stats{flex-wrap:wrap;gap:24px;}
+    .float-badge{left:12px;bottom:12px;}
     .why-grid{grid-template-columns:1fr;}
     .process-row{grid-template-columns:1fr;}
+    .services-grid{grid-template-columns:1fr;}
     .field-row{grid-template-columns:1fr;}
     .contact-cards{grid-template-columns:1fr;}
-    .foot-grid{grid-template-columns:1fr;gap:36px;}
+    .foot-grid{grid-template-columns:1fr;gap:34px;}
     .sec{padding-top:80px;padding-bottom:80px;}
-    .glass-form{padding:28px;}
-    .port-band{padding:44px 28px;}
+    .glass-form{padding:26px;}
+    .port-band{padding:40px 26px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .marquee,.float-badge,.scroll-cue .line{animation:none;}
+    .reveal{opacity:1;transform:none;transition:none;}
   }
 </style>
 </head>
@@ -349,16 +488,16 @@
 <header id="siteHeader">
   <div class="container nav-inner">
     <a href="#home" class="logo" data-nav="home">Pexel<span>ix</span></a>
-    <nav class="nav-links" id="navLinks">
+    <nav class="nav-links" id="navLinks" aria-label="Primary navigation">
       <a href="#home" data-nav="home">Home</a>
       <a href="#about" data-nav="about">About</a>
       <a href="#services" data-nav="services">Services</a>
-      <a href="https://www.behance.net/mnaseem" target="_blank" class="ext">Portfolio <i class="fa-solid fa-arrow-up-right"></i></a>
+      <a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer" class="ext">Portfolio <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
       <a href="#contact" data-nav="contact">Contact</a>
     </nav>
     <div class="nav-right">
-      <a href="#contact" class="btn btn-primary">Start Your Project <i class="fa-solid fa-arrow-up-right"></i></a>
-      <div class="burger" id="burger"><span></span><span></span><span></span></div>
+      <a href="#contact" class="btn btn-primary">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+      <button type="button" class="burger" id="burger" aria-label="Toggle navigation menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
@@ -372,8 +511,8 @@
         <h1>I design visuals that make people <em>trust</em> you first.</h1>
         <p class="lead">I'm Muhammad Naseem, a graphic designer working with businesses, authors and creators who need their brand or book to look like it belongs at the top of its category. Every project starts with strategy, not templates.</p>
         <div class="hero-actions">
-          <a href="https://www.behance.net/mnaseem" target="_blank" class="btn btn-rust">View My Work <i class="fa-solid fa-arrow-up-right"></i></a>
-          <a href="#contact" class="btn btn-outline">Start Your Project <i class="fa-solid fa-arrow-up-right"></i></a>
+          <a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer" class="btn btn-rust">View My Work <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          <a href="#contact" class="btn btn-outline">Start Your Project <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
         </div>
         <div class="hero-stats">
           <div><div class="num">100+</div><div class="lbl">Happy Clients</div></div>
@@ -383,10 +522,10 @@
       </div>
       <div class="hero-visual">
         <div class="hero-card">
-          <img src="https://i.imghippo.com/files/gvBg2501CfU.png" alt="Side-pose-Portrait" />
+          <img src="https://i.imghippo.com/files/gvBg2501CfU.png" alt="Side-pose-Portrait" referrerpolicy="no-referrer" />
         </div>
         <div class="float-badge">
-          <i class="fa-solid fa-star"></i>
+          <i class="fa-solid fa-star" aria-hidden="true"></i>
           <div><div class="t1">Client Rated</div><div class="t2">Premium Quality</div></div>
         </div>
       </div>
@@ -397,13 +536,13 @@
   <!-- TRUST STRIP -->
   <div class="trust">
     <div class="marquee" id="marquee">
-      <span><i class="fa-solid fa-circle"></i>Book Cover Design</span>
-      <span><i class="fa-solid fa-circle"></i>Brand Identity</span>
-      <span><i class="fa-solid fa-circle"></i>Logo Design</span>
-      <span><i class="fa-solid fa-circle"></i>YouTube Thumbnails</span>
-      <span><i class="fa-solid fa-circle"></i>Print Design</span>
-      <span><i class="fa-solid fa-circle"></i>Social Media Design</span>
-      <span><i class="fa-solid fa-circle"></i>Marketing Creatives</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Book Cover Design</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Brand Identity</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Logo Design</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>YouTube Thumbnails</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Print Design</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Social Media Design</span>
+      <span><i class="fa-solid fa-circle" aria-hidden="true"></i>Marketing Creatives</span>
     </div>
   </div>
 
@@ -425,14 +564,14 @@
 
 <!-- ================= ABOUT ================= -->
 <section id="about">
-  <div class="sec container" style="padding-top:0;">
+  <div class="sec container">
     <div class="sec-head reveal">
       <div class="eyebrow">About Me</div>
       <h2>Design is how I earn a reader's or a customer's first impression.</h2>
     </div>
     <div class="about-grid">
       <div class="about-portrait reveal">
-        <img src="https://i.imghippo.com/files/BO3429XiU.png" alt="front-facing-portrait" />
+        <img src="https://i.imghippo.com/files/BO3429XiU.png" alt="front-facing-portrait" referrerpolicy="no-referrer" />
       </div>
       <div class="about-copy reveal">
         <h3>My Story</h3>
@@ -465,55 +604,55 @@
 
 <!-- ================= SERVICES ================= -->
 <section id="services">
-  <div class="sec container" style="padding-top:0;">
+  <div class="sec container">
     <div class="sec-head reveal">
       <div class="eyebrow">What I Do</div>
       <h2>A focused set of services, done at a high level.</h2>
       <p>Every service below is something I do regularly, not a list padded out to look impressive.</p>
     </div>
-    <div class="services-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+    <div class="services-grid">
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-bezier-curve"></i><span class="tag">Identity</span></div>
+        <div class="top"><i class="fa-solid fa-bezier-curve" aria-hidden="true"></i><span class="tag">Identity</span></div>
         <h3>Logo Design</h3>
         <p>A distinct mark built to hold up at business card size and billboard size alike.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-swatchbook"></i><span class="tag">Identity</span></div>
+        <div class="top"><i class="fa-solid fa-swatchbook" aria-hidden="true"></i><span class="tag">Identity</span></div>
         <h3>Brand Identity Design</h3>
         <p>Full visual systems, color, type and guidelines, so your brand stays consistent everywhere it shows up.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-hashtag"></i><span class="tag">Digital</span></div>
+        <div class="top"><i class="fa-solid fa-hashtag" aria-hidden="true"></i><span class="tag">Digital</span></div>
         <h3>Social Media Design</h3>
         <p>Templates and post design that keep your feed looking intentional, not improvised.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-print"></i><span class="tag">Print</span></div>
+        <div class="top"><i class="fa-solid fa-print" aria-hidden="true"></i><span class="tag">Print</span></div>
         <h3>Print Design</h3>
         <p>Brochures, flyers and banners designed to work in someone's hand, not just on a screen.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-book"></i><span class="tag">Publishing</span></div>
+        <div class="top"><i class="fa-solid fa-book" aria-hidden="true"></i><span class="tag">Publishing</span></div>
         <h3>Book Cover Design</h3>
         <p>Covers built around genre signals and reader psychology, refined across 60-plus projects.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-tablet-screen-button"></i><span class="tag">Publishing</span></div>
+        <div class="top"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i><span class="tag">Publishing</span></div>
         <h3>eBook Cover Design</h3>
         <p>Thumbnail-optimized covers that still read clearly at Kindle store size.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-photo-film"></i><span class="tag">Digital</span></div>
+        <div class="top"><i class="fa-solid fa-photo-film" aria-hidden="true"></i><span class="tag">Digital</span></div>
         <h3>YouTube Thumbnail Design</h3>
         <p>High-contrast, click-worthy thumbnails that represent the video honestly.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-bullhorn"></i><span class="tag">Marketing</span></div>
+        <div class="top"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i><span class="tag">Marketing</span></div>
         <h3>Marketing Creatives</h3>
         <p>Ad creatives and campaign visuals built to perform, not just look polished.</p>
       </div>
       <div class="service-full reveal">
-        <div class="top"><i class="fa-solid fa-lightbulb"></i><span class="tag">Custom</span></div>
+        <div class="top"><i class="fa-solid fa-lightbulb" aria-hidden="true"></i><span class="tag">Custom</span></div>
         <h3>Creative Graphic Solutions</h3>
         <p>Have a project that doesn't fit a category above? I take on custom design work regularly.</p>
       </div>
@@ -521,17 +660,17 @@
   </div>
 
   <!-- PORTFOLIO REDIRECT BAND -->
-  <div class="container" style="padding-bottom:130px;">
+  <div class="container" style="padding-bottom:120px;">
     <div class="port-band reveal">
       <div class="port-band-inner">
         <div>
-          <div class="eyebrow" style="color:var(--gold);">See The Work</div>
+          <div class="eyebrow">See The Work</div>
           <h2>Every project mentioned here lives on Behance and Dribbble.</h2>
           <p>I keep my full case studies and finished covers on my portfolio platforms so you can see the range and quality up close.</p>
         </div>
         <div class="links">
-          <a href="https://www.behance.net/mnaseem" target="_blank" class="btn btn-rust">View Behance <i class="fa-brands fa-behance"></i></a>
-          <a href="https://dribbble.com/mnaseem" target="_blank" class="btn btn-outline-light">View Dribbble <i class="fa-brands fa-dribbble"></i></a>
+          <a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer" class="btn btn-rust">View Behance <i class="fa-brands fa-behance" aria-hidden="true"></i></a>
+          <a href="https://dribbble.com/mnaseem" target="_blank" rel="noreferrer" class="btn btn-outline-light">View Dribbble <i class="fa-brands fa-dribbble" aria-hidden="true"></i></a>
         </div>
       </div>
     </div>
@@ -540,25 +679,31 @@
 
 <!-- ================= TESTIMONIALS ================= -->
 <section id="testimonials">
-  <div class="sec container" style="padding-top:0;">
+  <div class="sec container">
     <div class="sec-head reveal">
       <div class="eyebrow">Client Words</div>
       <h2>What it's like to work together.</h2>
     </div>
     <div class="test-grid reveal">
       <div class="test-card">
-        <i class="fa-solid fa-quote-left"></i>
-        <p class="quote">Phenomenal! So clever, so creative and so committed to getting the work done in a timely manner. I will use Naseem again for all graphic design work, he totally understood my vision (better than I even did!) and has made such a fantastic illustration ...</p>
+        <div>
+          <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+          <p class="quote">Phenomenal! So clever, so creative and so committed to getting the work done in a timely manner. I will use Naseem again for all graphic design work, he totally understood my vision (better than I even did!) and has made such a fantastic illustration ...</p>
+        </div>
         <div class="test-who"><div class="test-avatar">G</div><div><div class="n">Georgia May P.</div><div class="r">Host Gut Girl Podcast</div></div></div>
       </div>
       <div class="test-card">
-        <i class="fa-solid fa-quote-left"></i>
-        <p class="quote">Naseem is absolutely one of the best designers that I have worked with. A true professional with great attention to detail. Did I mention his creativity? Top notch and highly recommended!</p>
+        <div>
+          <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+          <p class="quote">Naseem is absolutely one of the best designers that I have worked with. A true professional with great attention to detail. Did I mention his creativity? Top notch and highly recommended!</p>
+        </div>
         <div class="test-who"><div class="test-avatar">M</div><div><div class="n">coachronmpm</div><div class="r">Founder of Coach Ron MPM</div></div></div>
       </div>
       <div class="test-card">
-        <i class="fa-solid fa-quote-left"></i>
-        <p class="quote">Gute, proaktive Kommunikation und klare Bereitdschaft durch Support das Projekt zu unterstützen. Danke ;-)!</p>
+        <div>
+          <i class="fa-solid fa-quote-left" aria-hidden="true"></i>
+          <p class="quote">Gute, proaktive Kommunikation und klare Bereitdschaft durch Support das Projekt zu unterstützen. Danke ;-)!</p>
+        </div>
         <div class="test-who"><div class="test-avatar">D</div><div><div class="n">infBF3A</div><div class="r">Author</div></div></div>
       </div>
     </div>
@@ -567,7 +712,7 @@
 
 <!-- ================= CONTACT ================= -->
 <section id="contact">
-  <div class="sec container" style="padding-top:0;">
+  <div class="sec container">
     <div class="sec-head reveal">
       <div class="eyebrow">Contact</div>
       <h2>Tell me about your project. I read every message myself.</h2>
@@ -577,17 +722,17 @@
       <form class="glass-form reveal" id="contactForm" action="https://formspree.io/f/xjgnyooy" method="POST">
         <input type="hidden" name="_subject" value="New project inquiry from Pexelix website">
         <div class="field-row">
-          <div class="field"><label>Name</label><input type="text" name="name" placeholder="Your full name" required></div>
-          <div class="field"><label>Email</label><input type="email" name="email" placeholder="you@email.com" required></div>
+          <div class="field"><label for="field-name">Name</label><input id="field-name" type="text" name="name" placeholder="Your full name" required></div>
+          <div class="field"><label for="field-email">Email</label><input id="field-email" type="email" name="email" placeholder="you@email.com" required></div>
         </div>
         <div class="field-row">
-          <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+1 234 567 890"></div>
-          <div class="field"><label>Company</label><input type="text" name="company" placeholder="Company or brand name"></div>
+          <div class="field"><label for="field-phone">Phone</label><input id="field-phone" type="tel" name="phone" placeholder="+1 234 567 890"></div>
+          <div class="field"><label for="field-company">Company</label><input id="field-company" type="text" name="company" placeholder="Company or brand name"></div>
         </div>
         <div class="field-row">
           <div class="field">
-            <label>Project Type</label>
-            <select name="projectType">
+            <label for="field-type">Project Type</label>
+            <select id="field-type" name="projectType">
               <option>Book Cover Design</option>
               <option>Logo Design</option>
               <option>Brand Identity</option>
@@ -598,8 +743,8 @@
             </select>
           </div>
           <div class="field">
-            <label>Budget</label>
-            <select name="budget">
+            <label for="field-budget">Budget</label>
+            <select id="field-budget" name="budget">
               <option>Under $200</option>
               <option>$200 to $500</option>
               <option>$500 to $1,000</option>
@@ -607,21 +752,21 @@
             </select>
           </div>
         </div>
-        <div class="field"><label>Message</label><textarea name="message" placeholder="Tell me a bit about your project and timeline" required></textarea></div>
-        <button type="submit" class="btn btn-rust" style="width:100%;justify-content:center;">Send Message <i class="fa-solid fa-paper-plane"></i></button>
+        <div class="field"><label for="field-message">Message</label><textarea id="field-message" name="message" placeholder="Tell me a bit about your project and timeline" required></textarea></div>
+        <button type="submit" class="btn btn-rust" style="width:100%;justify-content:center;">Send Message <i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
         <p class="form-note">I'll get back to you within 24 hours, usually sooner.</p>
       </form>
 
       <div class="reveal">
         <div class="contact-cards">
-          <a href="mailto:info@pexelix.com" class="c-card"><i class="fa-solid fa-envelope"></i><div><div class="c-lbl">Email</div><div class="c-val">info@pexelix.com</div></div></a>
-          <a href="https://wa.me/923417390813" target="_blank" class="c-card"><i class="fa-brands fa-whatsapp"></i><div><div class="c-lbl">WhatsApp</div><div class="c-val">+92 341 7390813</div></div></a>
-          <a href="https://instagram.com/mnaseem28" target="_blank" class="c-card"><i class="fa-brands fa-instagram"></i><div><div class="c-lbl">Instagram</div><div class="c-val">@mnaseem28</div></div></a>
-          <a href="https://www.behance.net/mnaseem" target="_blank" class="c-card"><i class="fa-brands fa-behance"></i><div><div class="c-lbl">Behance</div><div class="c-val">/mnaseem</div></div></a>
-          <a href="https://dribbble.com/mnaseem" target="_blank" class="c-card"><i class="fa-brands fa-dribbble"></i><div><div class="c-lbl">Dribbble</div><div class="c-val">/mnaseem</div></div></a>
-          <a href="https://www.linkedin.com/in/naseem28/" target="_blank" class="c-card"><i class="fa-brands fa-linkedin"></i><div><div class="c-lbl">LinkedIn</div><div class="c-val">/in/naseem28</div></div></a>
-          <a href="https://www.upwork.com/freelancers/~019fd64cf62a750a65" target="_blank" class="c-card"><i class="fa-brands fa-upwork"></i><div><div class="c-lbl">Upwork</div><div class="c-val">View Profile</div></div></a>
-          <a href="https://99designs.com/profiles/mnaseem" target="_blank" class="c-card"><i class="fa-solid fa-palette"></i><div><div class="c-lbl">99designs</div><div class="c-val">View Profile</div></div></a>
+          <a href="mailto:info@pexelix.com" class="c-card"><i class="fa-solid fa-envelope" aria-hidden="true"></i><div><div class="c-lbl">Email</div><div class="c-val">info@pexelix.com</div></div></a>
+          <a href="https://wa.me/923417390813" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i><div><div class="c-lbl">WhatsApp</div><div class="c-val">+92 341 7390813</div></div></a>
+          <a href="https://instagram.com/mnaseem28" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-instagram" aria-hidden="true"></i><div><div class="c-lbl">Instagram</div><div class="c-val">@mnaseem28</div></div></a>
+          <a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-behance" aria-hidden="true"></i><div><div class="c-lbl">Behance</div><div class="c-val">/mnaseem</div></div></a>
+          <a href="https://dribbble.com/mnaseem" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-dribbble" aria-hidden="true"></i><div><div class="c-lbl">Dribbble</div><div class="c-val">/mnaseem</div></div></a>
+          <a href="https://www.linkedin.com/in/naseem28/" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-linkedin" aria-hidden="true"></i><div><div class="c-lbl">LinkedIn</div><div class="c-val">/in/naseem28</div></div></a>
+          <a href="https://www.upwork.com/freelancers/~019fd64cf62a750a65" target="_blank" rel="noreferrer" class="c-card"><i class="fa-brands fa-upwork" aria-hidden="true"></i><div><div class="c-lbl">Upwork</div><div class="c-val">View Profile</div></div></a>
+          <a href="https://99designs.com/profiles/mnaseem" target="_blank" rel="noreferrer" class="c-card"><i class="fa-solid fa-palette" aria-hidden="true"></i><div><div class="c-lbl">99designs</div><div class="c-val">View Profile</div></div></a>
         </div>
       </div>
     </div>
@@ -636,10 +781,10 @@
         <div class="foot-logo">Pexel<span>ix</span></div>
         <p class="foot-about">Graphic design for businesses, authors and creators who need their visuals to earn trust, not just attention.</p>
         <div class="foot-social">
-          <a href="https://instagram.com/mnaseem28" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-          <a href="https://www.behance.net/mnaseem" target="_blank"><i class="fa-brands fa-behance"></i></a>
-          <a href="https://dribbble.com/mnaseem" target="_blank"><i class="fa-brands fa-dribbble"></i></a>
-          <a href="https://www.linkedin.com/in/naseem28/" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
+          <a href="https://instagram.com/mnaseem28" target="_blank" rel="noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer" aria-label="Behance"><i class="fa-brands fa-behance"></i></a>
+          <a href="https://dribbble.com/mnaseem" target="_blank" rel="noreferrer" aria-label="Dribbble"><i class="fa-brands fa-dribbble"></i></a>
+          <a href="https://www.linkedin.com/in/naseem28/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
         </div>
       </div>
       <div class="foot-col">
@@ -649,16 +794,16 @@
           <li><a href="#about">About</a></li>
           <li><a href="#services">Services</a></li>
           <li><a href="#contact">Contact</a></li>
-          <li><a href="https://www.behance.net/mnaseem" target="_blank">Portfolio</a></li>
+          <li><a href="https://www.behance.net/mnaseem" target="_blank" rel="noreferrer">Portfolio</a></li>
         </ul>
       </div>
       <div class="foot-col">
         <h4>Contact</h4>
         <ul>
           <li><a href="mailto:info@pexelix.com">info@pexelix.com</a></li>
-          <li><a href="https://wa.me/923417390813" target="_blank">+92 341 7390813</a></li>
-          <li><a href="https://www.upwork.com/freelancers/~019fd64cf62a750a65" target="_blank">Upwork Profile</a></li>
-          <li><a href="https://99designs.com/profiles/mnaseem" target="_blank">99designs Profile</a></li>
+          <li><a href="https://wa.me/923417390813" target="_blank" rel="noreferrer">+92 341 7390813</a></li>
+          <li><a href="https://www.upwork.com/freelancers/~019fd64cf62a750a65" target="_blank" rel="noreferrer">Upwork Profile</a></li>
+          <li><a href="https://99designs.com/profiles/mnaseem" target="_blank" rel="noreferrer">99designs Profile</a></li>
         </ul>
       </div>
     </div>
@@ -669,7 +814,7 @@
   </div>
 </footer>
 
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span>Message sent. I'll reply within 24 hours.</span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><span>Message sent. I'll reply within 24 hours.</span></div>
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
@@ -682,12 +827,14 @@
   const burger = document.getElementById('burger');
   const navLinks = document.getElementById('navLinks');
   burger.addEventListener('click', () => {
-    burger.classList.toggle('open');
+    const isOpen = burger.classList.toggle('open');
     navLinks.classList.toggle('open');
+    burger.setAttribute('aria-expanded', String(isOpen));
   });
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
     burger.classList.remove('open');
     navLinks.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false');
   }));
 
   const sections = document.querySelectorAll('section[id]');
